@@ -1,23 +1,23 @@
-import pandas as pd
+iimport pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 
-from sklearn.model_selection import train_test_split
-
 from sklearn.manifold import TSNE
 
-from sklearn.datasets import fetch_mldata
+import matplotlib.cm as cm
+
 
 
 b=pd.read_csv('USvideos.csv',header=0)
 v=b.ix[0:500]
 n_sne = 7000
-print (v.shape)
 
 ba=pd.DataFrame(v)
 x=ba.drop(['description','ratings_disabled','video_error_or_removed','thumbnail_link','comments_disabled','tags','publish_time','channel_title','title','video_id','trending_date'],axis=1)
+x.to_csv('youtube.csv', sep=';')
+
 rndperm = np.random.permutation(x.shape[0])
-print (x[0:500])
+
 
 df_tsne = x.loc[rndperm[:n_sne],:].copy()
 T_re= TSNE( n_components = 2 ).fit_transform (df_tsne)
@@ -25,17 +25,13 @@ print (T_re.shape)
 
 x_r=np.array(T_re[:,0])
 y_r=np.array(T_re[:,1])
-plt.scatter(x_r,y_r)
-plt.xlabel('x')
-plt.ylabel('y')
-plt.show()
 
-import matplotlib.cm as cm
 
 df_tsne['x-tsne'] = T_re[:,0]
 df_tsne['y-tsne'] = T_re[:,1]
 print(df_tsne)
 df_ca=df_tsne['category_id']
 print df_ca
-df_tsne.plt(x='x_r', y='y_r', kind='scatter', 
-    c=[cm.tab20(c) for c in df_ca])
+df_tsne.plot(x='x-tsne', y='y-tsne', kind='scatter', 
+    c=[cm.Paired(c) for c in df_tsne.category_id])
+plt.show()
